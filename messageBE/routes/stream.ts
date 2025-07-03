@@ -1,0 +1,45 @@
+// routes/stream.ts
+export let clients: Response[] = [];
+
+export function handleStream(req: Request): Response {
+	const encoder = new TextEncoder();
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const send = (data: string) => {
+        controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+      };
+
+      const close = () => {
+        const index = clients.findIndex((c) => c.send === send);
+        if (index !== -1) clients.splice(index, 1);
+        try {
+          controller.close();
+        } catch (_) {}
+      };
+
+      // ✅ Register client
+      clients.push({ send, close });
+
+      // ✅ Send initial message
+      send("connected");
+
+      // ✅ Keep connection alive
+      const interval = setInterval(() => send("heartbeat"), 5000);
+
+      req.signal.addEventListener("abort", () => {
+        clearInterval(interval);
+        close();
+      });
+    },
+  });
+
+	return new Response(stream, {
+		headers: {
+			"Content-Type": "text/event-stream",
+			"Cache-Control": "no-cache",
+			"Connection": "keep-alive",
+			"Access-Control-Allow-Origin": "*",
+		}
+	});
+}
