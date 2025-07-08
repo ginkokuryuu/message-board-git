@@ -33,17 +33,25 @@ export function handleStream(req: Request): Response {
         clearInterval(interval);
         close();
       });
+
+      console.log("end start controller");
     },
   });
 
-	return new Response(stream, {
+  console.log("before returning stream");
+
+  const response = new Response(stream, {
 		headers: {
 			"Content-Type": "text/event-stream",
 			"Cache-Control": "no-cache",
 			"Connection": "keep-alive",
 			"Access-Control-Allow-Origin": "https://ginryuu.com/",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Accept",
 		}
 	});
+
+  console.log(response.headers);
+
+	return response;
 }
