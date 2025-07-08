@@ -22,11 +22,11 @@ export default function MessageList() {
     setMessages(data);
   };
 
-  useEffect(() => {
+  useEffect(async() => {
     const eventSource = new EventSource(`${API_URL}/stream`);
 
-    fetchMessages();
-    eventSource.onmessage = (event) => {
+    await fetchMessages();
+    eventSource.onmessage = async (event) => {
       console.log(event);
       console.log(event.data);
       if (!isJson(event.data)) {
@@ -34,7 +34,7 @@ export default function MessageList() {
       }
       const data = JSON.parse(event.data);
       if (data.type === "new_message") {
-        fetchMessages(); // re-fetch updated list
+        await fetchMessages(); // re-fetch updated list
       }
     };
 
