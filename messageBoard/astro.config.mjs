@@ -8,4 +8,8 @@ export default defineConfig({
   integrations: [preact()],
   output: "server",
   adapter: node({ mode: "standalone" }),
+  server: {
+    host: true,
+    port: 4321,
+  },
 });
