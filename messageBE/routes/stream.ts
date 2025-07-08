@@ -4,6 +4,8 @@ export let clients: Response[] = [];
 export function handleStream(req: Request): Response {
 	const encoder = new TextEncoder();
 
+  console.log("New client connected");
+
   const stream = new ReadableStream({
     start(controller) {
       const send = (data: string) => {
@@ -40,6 +42,8 @@ export function handleStream(req: Request): Response {
 			"Cache-Control": "no-cache",
 			"Connection": "keep-alive",
 			"Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
 		}
 	});
 }
